@@ -9,15 +9,43 @@
 import UIKit
 
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController,UITableViewDelegate, UITableViewDataSource {
+    
+   
+    var ExitsingUserList = [String]()
     var User:[UserInfo]? = nil
     @IBOutlet weak var error: UILabel!
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var username: UITextField!
-
+    @IBOutlet weak var StackView: UIStackView!
+    
+    @IBOutlet weak var LoginTableVIew: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        error.isHidden = true
+        
+        User = CoreDataHandler.fetchObject()
+        for i in User!
+        {
+            print(i.username!)
+            ExitsingUserList.insert("\(i.username!)", at: 0)
+            print("array--> \(ExitsingUserList)")
+        }
+            
+        self.LoginTableVIew.register(UITableViewCell.self , forCellReuseIdentifier: "cell")
+        print(User!)
+    }
+    
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        password.resignFirstResponder()
+        username.resignFirstResponder()
+    }
     
     @IBAction func login(_ sender: UIButton) {
+        print("Clicked..")
+        let tapGesture = UITapGestureRecognizer(target: self, action:#selector(self.dismissKeyboard (_:)))
+        self.view.addGestureRecognizer(tapGesture)
         
         if(username.text != nil && password.text != nil)
         {
@@ -44,6 +72,8 @@ class ViewController: UIViewController {
                     let temp = i.username!
                     if(user == temp)
                     {
+                        ExitsingUserList.insert("\(temp)", at: 0)
+                        LoginTableVIew.isHidden = false
                         error.isHidden = false
                         error.text = "User already Exits..\(temp)"
                     }
@@ -57,19 +87,25 @@ class ViewController: UIViewController {
             
         }
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        error.isHidden = true
-        
-    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.ExitsingUserList.count
+    }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Selected...")
+    }
 
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell : UITableViewCell = self.LoginTableVIew.dequeueReusableCell(withIdentifier: "cell")! as UITableViewCell
+        cell.textLabel?.text = ExitsingUserList[indexPath.row]
+
+        return cell
+    }
 }
-
