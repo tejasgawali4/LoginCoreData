@@ -32,7 +32,10 @@ class ViewController: UIViewController,UITableViewDelegate, UITableViewDataSourc
             ExitsingUserList.insert("\(i.username!)", at: 0)
             print("array--> \(ExitsingUserList)")
         }
-            
+        
+        LoginTableVIew.layer.masksToBounds = true
+        LoginTableVIew.layer.borderColor = UIColor(displayP3Red: 153/255, green: 153/255, blue: 0/255, alpha: 1.0).cgColor
+        LoginTableVIew.layer.borderWidth = 2.0
         self.LoginTableVIew.register(UITableViewCell.self , forCellReuseIdentifier: "cell")
         print(User!)
     }
